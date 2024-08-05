@@ -14,15 +14,18 @@ router.get("/", function (req, res, next) {
   console.log(secretKey);
 });
 
-router.post("/register", async (req, res, next) => {
+router.post("/", async (req, res, next) => {
   try {
     const newData = req.body;
 
-    const banks = await prisma.bank.create({
+    const transactions = await prisma.transaction.create({
       data: {
-        bankName: newData.bankName,
-        totalBalance: newData.totalBalance,
-        userId: users.id,
+        title: newData.bankName,
+        date: newData.totalBalance,
+        bankId: newData.bankId,
+        userId: newData.userId,
+        amount: newData.amount,
+        type: newData.type,
       },
     });
     res.status(200).json({
