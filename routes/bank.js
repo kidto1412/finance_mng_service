@@ -14,7 +14,7 @@ router.get("/", function (req, res, next) {
   console.log(secretKey);
 });
 
-router.post("/register", async (req, res, next) => {
+router.post("/register-bank", async (req, res, next) => {
   try {
     const newData = req.body;
 
@@ -22,7 +22,7 @@ router.post("/register", async (req, res, next) => {
       data: {
         bankName: newData.bankName,
         totalBalance: newData.totalBalance,
-        userId: users.id,
+        userId: newData.userId,
       },
     });
     res.status(200).json({
