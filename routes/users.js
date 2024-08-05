@@ -18,27 +18,34 @@ router.post("/register", async (req, res, next) => {
   try {
     const newData = req.body;
     const hashedPassword = await bcrypt.hash(newData.password, saltRounds);
-    const users = await prisma.user.create({
-      data: {
-        name: newData.name,
-        email: newData.email,
+    const dataUser = await prisma.user.findUnique({
+      where: {
         username: newData.username,
-        password: hashedPassword,
       },
     });
+    if (dataUser == null) {
+      const users = await prisma.user.create({
+        data: {
+          name: newData.name,
+          email: newData.email,
+          username: newData.username,
+          password: hashedPassword,
+        },
+      });
 
-    const banks = await prisma.bank.create({
-      data: {
-        bankName: newData.bankName,
-        totalBalance: newData.totalBalance,
-        userId: users.id,
-      },
-    });
-    res.status(200).json({
-      code: "00",
-      data: "Execute",
-      message: "Success",
-    });
+      res.status(200).json({
+        code: "00",
+        data: "Execute",
+        message: "Success",
+      });
+    } else {
+      res.status(200).json({
+        code: "99",
+        data: "Failed",
+        message: "Username already exist",
+      });
+    }
+    console.log(dataUser);
   } catch (error) {
     console.log(error);
     res
