@@ -14,17 +14,39 @@ datasource db {
 }
 
 model User {
-  id       Int    @id @default(autoincrement())
-  name     String
-  email    String
-  username String
-  password String
-  bankId   Int    @unique
-  bank     Bank   @relation(fields: [bankId], references: [id])
+  id          Int           @id @default(autoincrement())
+  name        String
+  email       String
+  username    String
+  password    String
+  banks       Bank[]
+  transaction Transaction[]
 }
 
 model Bank {
-  id       Int    @id @default(autoincrement())
-  bankName String
-  User     User[]
+  id           Int           @id @default(autoincrement())
+  bankName     String
+  totalBalance Int
+  userId       Int
+  user         User          @relation(fields: [userId], references: [id])
+  transaction  Transaction[]
+}
+
+enum TransactionType {
+  DEBIT
+  CREDIT
+}
+
+model Transaction {
+  id        String          @id @default(cuid())
+  title     String
+  date      String
+  userId    Int             @unique
+  bankId    Int             @unique
+  amount    Int
+  type      TransactionType
+  bank      Bank            @relation(fields: [bankId], references: [id])
+  user      User            @relation(fields: [userId], references: [id])
+  createdAt DateTime        @default(now())
+  updatedAt DateTime        @updatedAt
 }

@@ -24,6 +24,7 @@ router.post("/register", async (req, res, next) => {
         email: newData.email,
         username: newData.username,
         password: hashedPassword,
+        bank: null,
       },
     });
     res.status(200).json({
