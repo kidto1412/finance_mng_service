@@ -24,7 +24,14 @@ router.post("/register", async (req, res, next) => {
         email: newData.email,
         username: newData.username,
         password: hashedPassword,
-        bank: null,
+      },
+    });
+
+    const banks = await prisma.bank.create({
+      data: {
+        bankName: newData.bankName,
+        totalBalance: newData.totalBalance,
+        userId: users.id,
       },
     });
     res.status(200).json({
