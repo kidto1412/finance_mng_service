@@ -41,4 +41,26 @@ router.post("/", async (req, res, next) => {
   }
 });
 
+router.get("/get-transaction", async (req, res, next) => {
+  try {
+    const param = req.params;
+    const transactions = await prisma.transaction.findMany({
+      where: {
+        userId: param.userId,
+        bankId: param.bankId,
+      },
+    });
+    res.status(200).json({
+      code: "00",
+      data: transactions,
+      message: "Success",
+    });
+  } catch (error) {
+    console.log(error);
+    res
+      .status(500)
+      .send({ error: "An error occurred while creating the users" });
+  }
+});
+
 module.exports = router;

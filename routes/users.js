@@ -32,10 +32,9 @@ router.post("/register", async (req, res, next) => {
           password: hashedPassword,
         },
       });
-
       res.status(200).json({
         code: "00",
-        data: "Execute",
+        data: users.id,
         message: "Success",
       });
     } else {
@@ -63,6 +62,7 @@ router.put("/:id", async (req, res, next) => {
       where: { id: parseInt(id) },
       data: {
         name: newData.name,
+        email: newData.email,
         username: newData.username,
         password: hashedPassword,
       },
