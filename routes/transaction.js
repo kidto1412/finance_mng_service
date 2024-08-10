@@ -20,8 +20,8 @@ router.post("/", async (req, res, next) => {
 
     const transactions = await prisma.transaction.create({
       data: {
-        title: newData.bankName,
-        date: newData.totalBalance,
+        title: newData.title,
+        date: newData.date,
         bankId: newData.bankId,
         userId: newData.userId,
         amount: newData.amount,

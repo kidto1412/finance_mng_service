@@ -13,23 +13,24 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model User {
+model user {
   id          Int           @id @default(autoincrement())
   name        String
   email       String
   username    String        @unique
   password    String
-  banks       Bank[]
-  transaction Transaction[]
+  banks       bank[]
+  transaction transaction[]
+  category    category[]
 }
 
-model Bank {
+model bank {
   id           Int           @id @default(autoincrement())
   bankName     String
   totalBalance Int
-  userId       Int
-  user         User          @relation(fields: [userId], references: [id])
-  transaction  Transaction[]
+  userId       Int           @unique
+  user         user          @relation(fields: [userId], references: [id])
+  transaction  transaction[]
 }
 
 enum TransactionType {
@@ -37,7 +38,7 @@ enum TransactionType {
   CREDIT
 }
 
-model Transaction {
+model transaction {
   id        String          @id @default(cuid())
   title     String
   date      String
@@ -45,8 +46,15 @@ model Transaction {
   bankId    Int             @unique
   amount    Int
   type      TransactionType
-  bank      Bank            @relation(fields: [bankId], references: [id])
-  user      User            @relation(fields: [userId], references: [id])
+  bank      bank            @relation(fields: [bankId], references: [id])
+  user      user            @relation(fields: [userId], references: [id])
   createdAt DateTime        @default(now())
   updatedAt DateTime        @updatedAt
+}
+
+model category {
+  id     String @id @default(cuid())
+  name   String
+  userId Int    @unique
+  User   user   @relation(fields: [userId], references: [id])
 }

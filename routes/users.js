@@ -39,7 +39,7 @@ router.post("/register", async (req, res, next) => {
       });
     } else {
       res.status(200).json({
-        code: "99",
+        code: "40",
         data: "Failed",
         message: "Username already exist",
       });
@@ -47,9 +47,11 @@ router.post("/register", async (req, res, next) => {
     console.log(dataUser);
   } catch (error) {
     console.log(error);
-    res
-      .status(500)
-      .send({ error: "An error occurred while creating the users" });
+    res.status(500).json({
+      code: "99",
+      data: null,
+      message: "Failed",
+    });
   }
 });
 
@@ -107,7 +109,8 @@ router.post("/login", async (req, res, next) => {
 
     res.status(200).send({
       code: "00",
-      message: "Login successful",
+      message: "Success",
+      data: user.id,
       token: token,
     });
   } catch (error) {
