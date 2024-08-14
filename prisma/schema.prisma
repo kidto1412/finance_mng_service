@@ -14,23 +14,31 @@ datasource db {
 }
 
 model user {
-  id          Int           @id @default(autoincrement())
-  name        String
-  email       String
-  username    String        @unique
-  password    String
-  banks       bank[]
-  transaction transaction[]
-  category    category[]
+  id            Int             @id @default(autoincrement())
+  name          String
+  email         String
+  username      String          @unique
+  password      String
+  bank_user     bank_user[]
+  transaction   transaction[]
+  user_category user_category[]
 }
 
 model bank {
-  id           Int           @id @default(autoincrement())
-  bankName     String
+  id          Int           @id @default(autoincrement())
+  bankName    String
+  bank_user   bank_user[]
+  transaction transaction[]
+}
+
+model bank_user {
+  userId       Int
+  bankId       Int
   totalBalance Int
-  userId       Int           @unique
-  user         user          @relation(fields: [userId], references: [id])
-  transaction  transaction[]
+  user         user @relation(fields: [userId], references: [id])
+  bank         bank @relation(fields: [bankId], references: [id])
+
+  @@id([userId, bankId])
 }
 
 enum TransactionType {
@@ -39,22 +47,36 @@ enum TransactionType {
 }
 
 model transaction {
-  id        String          @id @default(cuid())
-  title     String
-  date      String
-  userId    Int             @unique
-  bankId    Int             @unique
-  amount    Int
-  type      TransactionType
-  bank      bank            @relation(fields: [bankId], references: [id])
-  user      user            @relation(fields: [userId], references: [id])
-  createdAt DateTime        @default(now())
-  updatedAt DateTime        @updatedAt
+  id         String          @id @default(cuid())
+  title      String
+  date       String
+  userId     Int
+  bankId     Int
+  categoryId Int
+  amount     Int
+  type       TransactionType
+  bank       bank            @relation(fields: [bankId], references: [id])
+  user       user            @relation(fields: [userId], references: [id])
+  category   category        @relation(fields: [categoryId], references: [id])
+  createdAt  DateTime        @default(now())
+  updatedAt  DateTime        @updatedAt
+
+  @@index([userId])
+  @@index([bankId])
 }
 
 model category {
-  id     String @id @default(cuid())
-  name   String
-  userId Int    @unique
-  User   user   @relation(fields: [userId], references: [id])
+  id            Int             @id @default(autoincrement())
+  name          String
+  user_category user_category[]
+  transactions  transaction[]
+}
+
+model user_category {
+  userId     Int
+  categoryId Int
+  users      user     @relation(fields: [userId], references: [id])
+  category   category @relation(fields: [categoryId], references: [id])
+
+  @@id([userId, categoryId])
 }

@@ -26,7 +26,7 @@ app.use("/", indexRouter);
 app.use("/users", usersRouter);
 app.use("/bank", bankRouter);
 app.use("/transaction", transactionRouter);
-app.use("category", categoriesRouter);
+app.use("/category", categoriesRouter);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {

@@ -14,15 +14,39 @@ router.get("/", function (req, res, next) {
   console.log(secretKey);
 });
 
-router.post("/add-bank-user", async (req, res, next) => {
+router.post("/add", async (req, res, next) => {
   try {
     const newData = req.body;
 
     const banks = await prisma.bank.create({
       data: {
         bankName: newData.bankName,
-        totalBalance: newData.totalBalance,
+      },
+    });
+    res.status(200).json({
+      code: "00",
+      data: "Execute",
+      message: "Success",
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({
+      code: "99",
+      data: null,
+      message: "Failed",
+    });
+  }
+});
+
+router.post("/add-bank-user", async (req, res, next) => {
+  try {
+    const newData = req.body;
+
+    const banks = await prisma.bank_user.create({
+      data: {
         userId: newData.userId,
+        bankId: newData.bankId,
+        totalBalance: newData.totalBalance,
       },
     });
     res.status(200).json({
