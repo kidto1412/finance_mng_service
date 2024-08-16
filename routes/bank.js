@@ -9,9 +9,25 @@ const saltRounds = 10;
 const secretKey = process.env.SECRET_KEY;
 
 /* GET users listing. */
-router.get("/", function (req, res, next) {
-  res.send("hello");
-  console.log(secretKey);
+router.get("/all", async (req, res, next) => {
+  try {
+    const banks = await prisma.bank.findMany();
+    const newBanks = banks.map((item) => ({
+      bankId: item.id,
+      bankName: item.bankName,
+    }));
+    res.status(200).json({
+      code: "00",
+      data: newBanks,
+      message: "Success",
+    });
+  } catch (e) {
+    res.status(500).json({
+      code: "99",
+      data: null,
+      message: "Failed",
+    });
+  }
 });
 
 router.post("/add", async (req, res, next) => {
@@ -44,8 +60,8 @@ router.post("/add-bank-user", async (req, res, next) => {
 
     const banks = await prisma.bank_user.create({
       data: {
-        userId: newData.userId,
-        bankId: newData.bankId,
+        userId: parseInt(newData.userId),
+        bankId: parseInt(newData.bankId),
         totalBalance: newData.totalBalance,
       },
     });
@@ -64,18 +80,27 @@ router.post("/add-bank-user", async (req, res, next) => {
   }
 });
 
-router.get("/:userId", async function (req, res, next) {
+router.get("/userId/:userId", async function (req, res, next) {
   try {
     const request = req.params;
     console.log(request);
-    const response = await prisma.bank.findMany({
+    const response = await prisma.bank_user.findMany({
+      include: {
+        bank: true,
+      },
       where: {
         userId: parseInt(request.userId),
       },
     });
+    const newResponse = response.map((item) => {
+      return {
+        ...item,
+        bankName: item.bank.bankName,
+      };
+    });
     res.status(200).json({
       code: "00",
-      data: response,
+      data: newResponse,
       message: "Success",
     });
   } catch (e) {

@@ -40,9 +40,15 @@ router.get("/userId/:id", async (req, res, next) => {
 router.get("/", async (req, res, next) => {
   try {
     const response = await prisma.category.findMany();
+    const newResponse = response.map((item) => {
+      return {
+        categoryId: item.id,
+        categoryName: item.name,
+      };
+    });
     res.status(200).json({
       code: "00",
-      data: response,
+      data: newResponse,
       message: "Success",
     });
   } catch (e) {
