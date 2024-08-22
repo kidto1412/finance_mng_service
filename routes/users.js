@@ -32,6 +32,19 @@ router.post("/register", async (req, res, next) => {
           password: hashedPassword,
         },
       });
+      // Fetch all default categories
+      const defaultCategories = await prisma.category.findMany({
+        where: {
+          userId: null, // Assuming default categories have userId as null
+        },
+      });
+      const userCategories = await defaultCategories.map((category) => ({
+        userId: users.id,
+        categoryId: category.id,
+      }));
+      await prisma.user_category.createMany({
+        data: userCategories,
+      });
       res.status(200).json({
         code: "00",
         data: users.id,

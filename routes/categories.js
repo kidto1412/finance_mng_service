@@ -64,7 +64,6 @@ router.get("/", async (req, res, next) => {
 router.post("/add", async (req, res, next) => {
   try {
     const newData = req.body;
-
     const category = await prisma.category.create({
       data: {
         name: newData.name,
@@ -91,7 +90,7 @@ router.post("/add-user-category", async (req, res, next) => {
 
     const categoryUser = await prisma.user_category.create({
       data: {
-        userId: parseInt(newData.userId),
+        userId: newData.userId == null ? NULL : parseInt(newData.userId),
         categoryId: parseInt(newData.categoryId),
       },
     });

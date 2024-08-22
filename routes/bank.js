@@ -161,6 +161,65 @@ router.put("/edit-bank-user/bankId/:bankId", async (req, res, next) => {
   }
 });
 
+router.delete("/delete-bank-user/:userId/:bankId", async (req, res, next) => {
+  try {
+    const bankId = parseInt(req.params.bankId);
+    const userId = parseInt(req.params.userId);
+    const banks = await prisma.bank_user.delete({
+      where: {
+        userId_bankId: {
+          userId: userId,
+          bankId: bankId,
+        },
+      },
+    });
+    res.status(200).json({
+      code: "00",
+      data: "Deleted",
+      message: "Success",
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({
+      code: "99",
+      data: null,
+      message: "Failed",
+    });
+  }
+});
+
+router.get("/balance/:userId", async function (req, res, next) {
+  try {
+    const request = req.params;
+    console.log(request);
+    const response = await prisma.bank_user.findMany({
+      include: {
+        bank: true,
+      },
+      where: {
+        userId: parseInt(request.userId),
+      },
+    });
+
+    let totalBalance = 0;
+    response.map((item) => {
+      totalBalance = totalBalance + item.totalBalance;
+    });
+    res.status(200).json({
+      code: "00",
+      data: totalBalance,
+      message: "Success",
+    });
+  } catch (e) {
+    console.log(e);
+    res.status(500).json({
+      code: "99",
+      data: null,
+      message: "Failed",
+    });
+  }
+});
+
 router.get("/userId/:userId", async function (req, res, next) {
   try {
     const request = req.params;

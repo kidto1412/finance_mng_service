@@ -22,6 +22,7 @@ model user {
   bank_user     bank_user[]
   transaction   transaction[]
   user_category user_category[]
+  categories    category[]
 }
 
 model bank {
@@ -68,8 +69,12 @@ model transaction {
 model category {
   id            Int             @id @default(autoincrement())
   name          String
+  userId        Int?
+  user          user?           @relation(fields: [userId], references: [id]) // Relation to the user model
   user_category user_category[]
   transactions  transaction[]
+
+  @@index([userId]) // Create an index on the userId for faster queries
 }
 
 model user_category {
